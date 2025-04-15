@@ -1,0 +1,83 @@
+But     : produire (p, g) avec p premier (a <= p < b) et g d'ordre p-1 modulo p.
+          Il faut également fournir la factorisation de p-1.
+          p-1 doit être un multiple de q.
+
+
+a = e4c4181c4f3fa09b41123061b4efe8fd596ce4bf1d62237726da890d99437fd18490a82aea9bc5dc1c9b72e66bb3cd90d27d2a9def15e7712c24cc6f8b0f1d40c1557afe48c6269d69b8f05d9a608fe092fbc886319eeef59e7f3010a322563e81e566070d6da38b01143be970b900959d106c45bebcc1366f364cfca0f22819b19dcbaa41fe4d639c46c66a25bee7e94b7e93200c7867176d1dda3a655f621307d339916753006bffd68315753c506456ccd50fb1db953992c0a6a9ee119213d7fa14853a1c72ccc9f910c5ae7264f0d8dbb854bb7dfc62703f65568f52b14ff77d2e04edf4c476aa6c4eedd2abce15d7c2f7b274194a763a9b67c41cbca671
+b = a + 2**1950
+q = ef98684a19fd3ad1f489aa7008968660e57436d10b18e2e474fd3dd3dc8cabd4740250dfdddca4a183af916fdfd4bb5f
+
+
+Format pour (p-1) // q : x1, x2, ..., xn
+
+Conseils :
+
+>>> conseil 2
+Il est facile de trouver un g qui marche... si on dispose de la factorisation
+de p-1.  Le problème principal consiste donc à produire un nombre premier p 
+tout en connaissant la factorisation de p-1.  La seule procédure envisageable 
+consiste à produire des nombres X de la bonne taille dont la factorisation est 
+connue, puis à tester si X+1 est premier.
+
+
+>>> conseil 2
+En plus, on nous impose un facteur premier q qui doit diviser p-1.
+La technique la plus simple, mais probablement pas la plus rapide, pour 
+fabriquer p, consiste à générer un grand nombre premier r, puis à poser
+p = q2r + 1.  Si p est premier, alors la factorisation de p-1 est connue :
+les diviseurs premiers de p-1 sont 2, q et r.
+
+
+>>> conseil 2
+Pour faire marcher cette technique, il faut générer des nombres aléatoires r 
+dans le bon intervalle, puis tester s'ils sont premier, avant de tester si
+le p auquel cela aboutit est premier.  Autrement dit, pour avoir
+        a <= 1 + 2qr < b,
+il faut poser
+        (a - 1) / 2q <= r < (b - 1) / 2q.
+
+
+>>> conseil 2
+Il est possible de faire plus rapide. La rumeur prétend que certains h4x0rz ont
+écrit du code Python pur qui résoud le problème en 5 secondes environ.
+Pour aller plus vite, il faut éviter au maximum de faire des tests de primalité
+sur des grands entiers.  Pour cela, il faut fabriquer p-1 avec plusieurs petits
+facteurs premiers, puis tester si p est premier.
+
+
+>>> conseil 2
+Pour produire k nombres premiers p_1, ..., p_k de telle sorte que 
+        Q = p_1 * p_2 * ... * p_k 
+appartienne à l'intervalle [a; b[, il n'y a pas 36 solutions.  En gros, la
+technique est la suivante : 
+1) Fabriquer dans un premier temps les k-1 premiers nombres librement
+2) Fabriquer le dernier en faisant bien attention à ce que produit soit
+   dans [a; b[
+Après la phase 1, on se trouve avec Q' = p_1 * p_2 * ... * p_{k-1}. Pour que le
+produit final soit dans le bon intervalle, il faut choisir p_k dans l'intervalle
+[a/Q'; b/Q'[.
+
+
+>>> conseil 2
+Si on met en oeuvre la stratégie précédente, il y a un problème à éviter :   
+plus Q' est grand, plus l'intervalle [a/Q'; b/Q'[ rétrecit.  Et s'il est
+trop petit, il peut ne pas contenir de nombre premier du tout (impossible
+de trouver p_k dedans, donc).  Ou bien, il peut ne pas en contenir suffisamment
+(possible de trouver p_k, mais p = Q + 1 n'est jamais premier).  Il est 
+difficile d'obtenir des certitudes, mais il est raisonnable de penser qu'il 
+faut qu'il contienne O(|b|) nombres différents pour que l'un d'entre eux soit 
+premier avec bonne probabilité.  Il faut donc que 
+        (b/Q') - (a/Q') >= [constante arbitraire] * |b|**2.
+        (b-a)/Q' >= K * |b|**2
+        Q' <= (b-a)/(K*|b|**2)
+
+Pour s'en sortir, il faut donc :
+- déterminer dans un premier temps la taille que doit avoir Q' en bits.
+- produire Q' en multipliant ensemble des nombres premiers arbitraires.
+- trouver le dernier facteur premier.
+
+
+>>> conseil 2
+C'est tout !
+
+
